@@ -1,4 +1,4 @@
-let getStringLength=function(string,length){
+const getStringLength=function(string,length){
   if(string.length<=length){
     return true;
   }else{
@@ -7,23 +7,21 @@ let getStringLength=function(string,length){
 };
 
 
-
-
-let checkPalindrome=function(string){
-  let normalized = string.replaceAll(' ', '').toLowerCase();
+const checkPalindrome=function(string){
+  const normalized = string.replaceAll(' ', '').toLowerCase();
   let reversed='';
   for(let i=normalized.length-1;i>=0;i--){
-     reversed+= normalized[i];
+    reversed+= normalized[i];
   }
   return reversed === normalized;
 };
 
 
-let extractNumberFromString=function(input){
-  let str = typeof input === 'number' ? input.toString() : input;
+const extractNumberFromString=function(input){
+  const str = typeof input === 'number' ? input.toString() : input;
   let result='';
   for(let i=0;i<=str.length;i++){
-    let symbol=str[i];
+    const symbol=str[i];
     if(symbol>='0'&& symbol<='9'){
       result+=symbol;
     }
@@ -35,11 +33,16 @@ let extractNumberFromString=function(input){
 };
 
 
+const getRandomInteger = (a, b) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
+};
 
 
+getStringLength();
+checkPalindrome();
+extractNumberFromString();
 
-
-
-
-
-
+export{getRandomInteger};
