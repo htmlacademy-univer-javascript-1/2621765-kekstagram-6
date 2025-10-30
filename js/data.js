@@ -87,4 +87,4 @@ const generatePhotoDescriptions = () => {
   return photos;
 };
 
-generatePhotoDescriptions();
+export{generatePhotoDescriptions};

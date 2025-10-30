@@ -33,5 +33,4 @@ const renderPhotos = (obj) => {
   });
   pictures.appendChild(fragment);
 };
-
-renderPhotos();
+export {renderPhotos};
