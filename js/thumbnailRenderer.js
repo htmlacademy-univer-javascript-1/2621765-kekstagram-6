@@ -22,12 +22,8 @@ const renderPhoto = (photo) => {
 
 const fragment=document.createDocumentFragment();
 
-const clearPhotos=() =>{
-  pictures.innerHTML='';
-};
-
 const renderPhotos = (obj) => {
-  clearPhotos();
+
   obj.forEach((i) => {
     fragment.appendChild(renderPhoto(i));
   });
