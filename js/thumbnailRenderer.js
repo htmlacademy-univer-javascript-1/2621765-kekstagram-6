@@ -7,7 +7,7 @@ const renderPhoto = (photo) => {
   const {url, comments, likes, description} = photo;
   const clonedElement = picture.cloneNode(true);
   clonedElement.querySelector('.picture__likes').textContent = likes;
-  clonedElement.querySelector('.picture__comments').textContent = comments;
+  clonedElement.querySelector('.picture__comments').textContent = comments.length;
   const img = clonedElement.querySelector('.picture__img');
   img.src = url;
   img.alt = description;
@@ -33,4 +33,6 @@ const renderPhotos = (obj) => {
   });
   pictures.appendChild(fragment);
 };
-export {renderPhotos};
+const photos = generatePhotoDescriptions();
+renderPhotos(photos);
+
