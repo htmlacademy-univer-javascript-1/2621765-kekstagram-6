@@ -1,4 +1,5 @@
 import {generatePhotoDescriptions} from './data.js';
+import {openBigPicture} from './bigPicture.js';
 
 const pictures=document.querySelector('.pictures');
 const picture=document.querySelector('#picture').content.querySelector('.picture');
@@ -15,6 +16,7 @@ const renderPhoto = (photo) => {
   clonedElement.addEventListener('click', (evt) => {
     evt.preventDefault();
     generatePhotoDescriptions(photo);
+    openBigPicture(photo);
   });
 
   return clonedElement;
