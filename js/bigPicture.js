@@ -1,3 +1,4 @@
+import {isEscKey} from './util.js';
 const bigPicture = document.querySelector('.big-picture');
 const bigImg = bigPicture.querySelector('.big-picture__img img');
 const socialComments = bigPicture.querySelector('.social__comments');
@@ -75,9 +76,6 @@ const onLoadButtonButtonClick = () => {
   renderComments();
 };
 
-function isEscKey(evt) {
-  return evt.key === 'Escape' || evt.key === 'Esc' || evt.keyCode === 27;
-}
 
 function onBigPictureEscKeyDown(evt) {
   if (isEscKey(evt)) {
