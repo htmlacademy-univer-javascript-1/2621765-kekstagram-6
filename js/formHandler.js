@@ -1,3 +1,5 @@
+import {isEscKey} from './util.js';
+
 const MAX_SYMBOLS=20;
 const MAX_COMMENT_SYMBOLS=140;
 const MAX_HASHTAGS=5;
@@ -5,7 +7,6 @@ const MAX_HASHTAGS=5;
 const imgInput=document.querySelector('.img-upload__input');
 const imgOverlay=document.querySelector('.img-upload__overlay');
 const imgCancel=document.querySelector('.img-upload__cancel');
-//const imgPreview=document.querySelector('.img-upload__preview');
 const imgForm=document.querySelector('.img-upload__form');
 const textHashtags=document.querySelector('.text__hashtags');
 const imgSubmit=document.querySelector('.img-upload__submit');
@@ -16,24 +17,6 @@ imgInput.addEventListener('change',()=>{
   document.body.classList.add('modal-open');
 });
 
-
-imgCancel.addEventListener('click',()=>{
-  imgInput.value = '';
-  imgForm.reset();
-  imgOverlay.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-});
-
-document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
-    evt.preventDefault();
-    imgInput.value = '';
-    imgForm.reset();
-    imgOverlay.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-  }
-});
-
 const pristine = new Pristine(imgForm, {
   classTo: 'img-upload__field-wrapper',
   errorClass: 'img-upload__item--invalid',
@@ -42,6 +25,26 @@ const pristine = new Pristine(imgForm, {
   errorTextClass: 'img-upload__error',
   errorTextTag: 'div',
 });
+
+imgCancel.addEventListener('click',()=>{
+  imgInput.value = '';
+  imgForm.reset();
+  pristine.reset();
+  imgOverlay.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+});
+
+document.addEventListener('keydown', (evt) => {
+  if (isEscKey(evt)) {
+    evt.preventDefault();
+    imgInput.value = '';
+    imgForm.reset();
+    pristine.reset();
+    imgOverlay.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+  }
+});
+
 
 let errorMessage='';
 
@@ -131,13 +134,13 @@ const onContentInput=()=>{
 };
 
 comments.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscKey(evt)) {
     evt.stopPropagation();
   }
 });
 
 textHashtags.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
+  if (isEscKey(evt)) {
     evt.stopPropagation();
   }
 });
