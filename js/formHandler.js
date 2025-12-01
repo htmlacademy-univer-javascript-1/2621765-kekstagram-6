@@ -15,6 +15,7 @@ const comments=document.querySelector('.text__description');
 imgInput.addEventListener('change',()=>{
   imgOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
+  resetSlider();
 });
 
 const pristine = new Pristine(imgForm, {
@@ -177,26 +178,8 @@ controlBigger.addEventListener('click', () => {
     imgPreview.style.transform = `scale(${scaleNumber})`;
   }
 });
-/*С помощью библиотеки noUiSlider (скрипт и стили находятся в директории /vendor/nouislider) реализуйте применение эффекта для изображения.
-Кроме визуального применения эффекта необходимо записывать значение в скрытое поле для дальнейшей отправки на сервер.
 
-Обратите внимание, что при переключении фильтра, уровень эффекта должен сразу сбрасываться до начального состояния, т. е. логика
-по определению уровня насыщенности должна срабатывать не только при «перемещении» слайдера, но и при переключении фильтров.
 
-По умолчанию должен быть выбран эффект «Оригинал».
-На изображение может накладываться только один эффект.
-Интенсивность эффекта регулируется перемещением ползунка в слайдере.
- Слайдер реализуется сторонней библиотекой для реализации слайдеров noUiSlider.
- Уровень эффекта записывается в поле .effect-level__value. При изменении уровня интенсивности
-  эффекта (предоставляется API слайдера), CSS-стили картинки внутри .img-upload__preview обновляются следующим образом:
-Для эффекта «Хром» — filter: grayscale(0..1) с шагом 0.1;
-Для эффекта «Сепия» — filter: sepia(0..1) с шагом 0.1;
-Для эффекта «Марвин» — filter: invert(0..100%) с шагом 1%;
-Для эффекта «Фобос» — filter: blur(0..3px) с шагом 0.1px;
-Для эффекта «Зной» — filter: brightness(1..3) с шагом 0.1;
-Для эффекта «Оригинал» CSS-стили filter удаляются.
-При выборе эффекта «Оригинал» слайдер и его контейнер (элемент .img-upload__effect-level) скрываются.
-При переключении эффектов, уровень насыщенности сбрасывается до начального значения (100%): слайдер, CSS-стиль изображения и значение поля должны обновляться.*/
 const sliderElement = document.querySelector('.img-upload__effect-level');
 const effectSlider=document.querySelector('.effect-level__slider');
 const effectValueInput = document.querySelector('.effect-level__value');
@@ -208,19 +191,20 @@ const effectsMarvin=document.querySelector('#effect-marvin');
 const effectsPhobos=document.querySelector('#effect-phobos');
 const effectsHeat=document.querySelector('#effect-heat');
 
-
-effectsNone.addEventListener('change',()=>{
-  effectValueInput.value = '';
-  imgPreview.style.filter = '';
-  sliderElement.style.display = 'none';
-});
-
-effectsChrome.addEventListener('change',()=>{
+function resetSlider() {
   if (effectSlider.noUiSlider) {
     effectSlider.noUiSlider.destroy();
   }
-  sliderElement.style.display = 'block';
+  sliderElement.style.display = 'none';
   imgPreview.style.filter = '';
+  effectValueInput.value = '';
+}
+
+effectsNone.addEventListener('change', resetSlider);
+
+effectsChrome.addEventListener('change',()=>{
+  resetSlider();
+  sliderElement.style.display = 'block';
 
   noUiSlider.create(effectSlider, {
     range: {
@@ -241,11 +225,8 @@ effectsChrome.addEventListener('change',()=>{
 });
 
 effectsSepia.addEventListener('change',()=>{
-  if (effectSlider.noUiSlider) {
-    effectSlider.noUiSlider.destroy();
-  }
+  resetSlider();
   sliderElement.style.display = 'block';
-  imgPreview.style.filter = '';
   noUiSlider.create(effectSlider, {
     range: {
       min: 0,
@@ -264,11 +245,8 @@ effectsSepia.addEventListener('change',()=>{
 });
 
 effectsMarvin.addEventListener('change',()=>{
-  if (effectSlider.noUiSlider) {
-    effectSlider.noUiSlider.destroy();
-  }
+  resetSlider();
   sliderElement.style.display = 'block';
-  imgPreview.style.filter = '';
   noUiSlider.create(effectSlider, {
     range: {
       min: 0,
@@ -288,11 +266,8 @@ effectsMarvin.addEventListener('change',()=>{
 
 
 effectsPhobos.addEventListener('change',()=>{
-  if (effectSlider.noUiSlider) {
-    effectSlider.noUiSlider.destroy();
-  }
+  resetSlider();
   sliderElement.style.display = 'block';
-  imgPreview.style.filter = '';
   noUiSlider.create(effectSlider, {
     range: {
       min: 0,
@@ -311,11 +286,8 @@ effectsPhobos.addEventListener('change',()=>{
 });
 
 effectsHeat.addEventListener('change',()=>{
-  if (effectSlider.noUiSlider) {
-    effectSlider.noUiSlider.destroy();
-  }
+  resetSlider();
   sliderElement.style.display = 'block';
-  imgPreview.style.filter = '';
   noUiSlider.create(effectSlider, {
     range: {
       min: 1,
