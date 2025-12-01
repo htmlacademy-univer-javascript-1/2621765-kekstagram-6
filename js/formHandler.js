@@ -200,107 +200,50 @@ function resetSlider() {
   effectValueInput.value = '';
 }
 
+
+function createrSliders(min,max,start,step,filterFunction){
+  resetSlider();
+  sliderElement.style.display = 'block';
+
+  noUiSlider.create(effectSlider, {
+    range: {
+      min: min,
+      max: max,
+    },
+    start: start,
+    step: step,
+    connect: 'lower',
+  });
+  effectValueInput.value = start;
+  effectSlider.noUiSlider.off('update');
+  effectSlider.noUiSlider.on('update', (values) => {
+    const value = values[0];
+    effectValueInput.value = value;
+    imgPreview.style.filter = filterFunction(value);
+  });
+}
+
+
 effectsNone.addEventListener('change', resetSlider);
 
-effectsChrome.addEventListener('change',()=>{
-  resetSlider();
-  sliderElement.style.display = 'block';
+effectsChrome.addEventListener('change', () =>
+  createrSliders(0, 1, 1, 0.1, (value) => `grayscale(${value})`)
+);
 
-  noUiSlider.create(effectSlider, {
-    range: {
-      min: 0,
-      max: 1,
-    },
-    start: 1,
-    step: 0.1,
-    connect: 'lower',
-  });
-  effectValueInput.value = 1;
-  effectSlider.noUiSlider.off('update');
-  effectSlider.noUiSlider.on('update', (values) => {
-    const value = values[0];
-    effectValueInput.value = value;
-    imgPreview.style.filter = `grayscale(${value})`;
-  });
-});
+effectsSepia.addEventListener('change', () =>
+  createrSliders(0, 1, 1, 0.1, (value) => `sepia(${value})`)
+);
 
-effectsSepia.addEventListener('change',()=>{
-  resetSlider();
-  sliderElement.style.display = 'block';
-  noUiSlider.create(effectSlider, {
-    range: {
-      min: 0,
-      max: 1,
-    },
-    start: 1,
-    step: 0.1,
-    connect: 'lower',
-  });
-  effectSlider.noUiSlider.off('update');
-  effectSlider.noUiSlider.on('update', (values) => {
-    const value = values[0];
-    effectValueInput.value = value;
-    imgPreview.style.filter = `sepia(${value})`;
-  });
-});
+effectsMarvin.addEventListener('change', () =>
+  createrSliders(0, 100, 100, 1, (value) => `invert(${value})`)
+);
 
-effectsMarvin.addEventListener('change',()=>{
-  resetSlider();
-  sliderElement.style.display = 'block';
-  noUiSlider.create(effectSlider, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 100,
-    step: 1,
-    connect: 'lower',
-  });
-  effectSlider.noUiSlider.off('update');
-  effectSlider.noUiSlider.on('update', (values) => {
-    const value = values[0];
-    effectValueInput.value = value;
-    imgPreview.style.filter = `invert(${value})`;
-  });
-});
+effectsPhobos.addEventListener('change', () =>
+  createrSliders(0, 3, 3, 0.1, (value) => `blur(${value}px)`)
+);
+
+effectsHeat.addEventListener('change', () =>
+  createrSliders(1, 3, 3, 0.1, (value) => `brightness(${value})`)
+);
 
 
-effectsPhobos.addEventListener('change',()=>{
-  resetSlider();
-  sliderElement.style.display = 'block';
-  noUiSlider.create(effectSlider, {
-    range: {
-      min: 0,
-      max: 3,
-    },
-    start: 3,
-    step: 0.1,
-    connect: 'lower',
-  });
-  effectSlider.noUiSlider.off('update');
-  effectSlider.noUiSlider.on('update', (values) => {
-    const value = values[0];
-    effectValueInput.value = value;
-    imgPreview.style.filter = `blur(${value}px)`;
-  });
-});
-
-effectsHeat.addEventListener('change',()=>{
-  resetSlider();
-  sliderElement.style.display = 'block';
-  noUiSlider.create(effectSlider, {
-    range: {
-      min: 1,
-      max: 3,
-    },
-    start: 3,
-    step: 0.1,
-    connect: 'lower',
-  });
-  effectSlider.noUiSlider.off('update');
-  effectSlider.noUiSlider.on('update', (values) => {
-    const value = values[0];
-    effectValueInput.value = value;
-    imgPreview.style.filter = `brightness(${value})`;
-  });
-});
