@@ -1,5 +1,5 @@
-import {generatePhotoDescriptions} from './data.js';
 import {openBigPicture} from './bigPicture.js';
+
 
 const pictures=document.querySelector('.pictures');
 const picture=document.querySelector('#picture').content.querySelector('.picture');
@@ -15,7 +15,6 @@ const renderPhoto = (photo) => {
 
   clonedElement.addEventListener('click', (evt) => {
     evt.preventDefault();
-    generatePhotoDescriptions(photo);
     openBigPicture(photo);
   });
 
@@ -31,6 +30,8 @@ const renderPhotos = (obj) => {
   });
   pictures.appendChild(fragment);
 };
-const photos = generatePhotoDescriptions();
-renderPhotos(photos);
+
+
+export{renderPhotos};
+
 
