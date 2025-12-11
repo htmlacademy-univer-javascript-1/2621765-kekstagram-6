@@ -163,17 +163,11 @@ const onMessageEscKeydown = (evt) => {
   }
 };
 
-function onMessageOverlayClick  (evt)  {
-  const successMsg = document.querySelector('.success');
-  const errorMsg = document.querySelector('.error');
-
-  const activeMessage = successMsg || errorMsg;
-  if (!activeMessage) {return;}
-
-  const isClickInside = activeMessage.contains(evt.target);
-
-  if (!isClickInside) {
-    activeMessage.remove();
+function onMessageOverlayClick (evt) {
+  const button = evt.target.closest('button');
+  if (!button && evt.target.closest('.success, .error')) {
+    const message = document.querySelector('.success, .error');
+    message.remove();
     document.removeEventListener('click', onMessageOverlayClick);
     document.removeEventListener('keydown', onMessageEscKeydown);
   }
@@ -210,24 +204,25 @@ const showErrorMessage = () => {
 };
 
 imgForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
+  if(pristine.validate()){
+    evt.preventDefault();
 
-  const formData = new FormData(imgForm);
-
-  uploadData(
-    () => {
-      imgInput.value = '';
-      imgForm.reset();
-      pristine.reset();
-      imgOverlay.classList.add('hidden');
-      document.body.classList.remove('modal-open');
-      showSuccessMessage();
-    },
-    () => {
-      showErrorMessage();
-    },
-    formData
-  );
+    uploadData(
+      () => {
+        imgInput.value = '';
+        imgForm.reset();
+        pristine.reset();
+        imgOverlay.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+        showSuccessMessage();
+      },
+      () => {
+        showErrorMessage();
+      },
+      'POST',
+      new FormData(imgForm)
+    );
+  }
 });
 
 comments.addEventListener('keydown', (evt) => {
