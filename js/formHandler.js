@@ -1,4 +1,5 @@
 import {isEscKey} from './util.js';
+import {uploadData} from './fetch.js';
 
 const MAX_SYMBOLS=20;
 const MAX_COMMENT_SYMBOLS=140;
@@ -11,6 +12,7 @@ const imgForm=document.querySelector('.img-upload__form');
 const textHashtags=document.querySelector('.text__hashtags');
 const imgSubmit=document.querySelector('.img-upload__submit');
 const comments=document.querySelector('.text__description');
+
 
 imgInput.addEventListener('change',()=>{
   imgOverlay.classList.remove('hidden');
@@ -36,14 +38,20 @@ imgCancel.addEventListener('click',()=>{
 });
 
 document.addEventListener('keydown', (evt) => {
-  if (isEscKey(evt)) {
-    evt.preventDefault();
-    imgInput.value = '';
-    imgForm.reset();
-    pristine.reset();
-    imgOverlay.classList.add('hidden');
-    document.body.classList.remove('modal-open');
+  if (!isEscKey(evt)) {
+    return;
   }
+
+  if (document.querySelector('.success, .error')) {
+    return;
+  }
+
+  evt.preventDefault();
+  imgInput.value = '';
+  imgForm.reset();
+  pristine.reset();
+  imgOverlay.classList.add('hidden');
+  document.body.classList.remove('modal-open');
 });
 
 
@@ -126,6 +134,7 @@ const commentsHandler=(value)=>{
 pristine.addValidator(comments,commentsHandler,error,1,false);
 pristine.addValidator(textHashtags,hashtagsHandler,error,2,false);
 
+
 const onContentInput=()=>{
   if(pristine.validate()){
     imgSubmit.disabled = false;
@@ -133,6 +142,88 @@ const onContentInput=()=>{
     imgSubmit.disabled = true;
   }
 };
+
+const successTemplate = document.querySelector('#success').content.querySelector('.success');
+const errorTemplate = document.querySelector('#error').content.querySelector('.error');
+
+const onMessageEscKeydown = (evt) => {
+  if (isEscKey(evt)) {
+    evt.preventDefault();
+    const successMsg = document.querySelector('.success');
+    const errorMsg = document.querySelector('.error');
+
+    if (successMsg) {
+      successMsg.remove();
+    } else if (errorMsg) {
+      errorMsg.remove();
+    }
+
+    document.removeEventListener('keydown', onMessageEscKeydown);
+    document.removeEventListener('click', onMessageOverlayClick);
+  }
+};
+
+function onMessageOverlayClick (evt) {
+  const button = evt.target.closest('button');
+  if (!button && evt.target.closest('.success, .error')) {
+    const message = document.querySelector('.success, .error');
+    message.remove();
+    document.removeEventListener('click', onMessageOverlayClick);
+    document.removeEventListener('keydown', onMessageEscKeydown);
+  }
+}
+
+const showSuccessMessage = () => {
+  const clonedSuccess = successTemplate.cloneNode(true);
+  document.body.append(clonedSuccess);
+
+  const closeBtn = clonedSuccess.querySelector('.success__button');
+  closeBtn.addEventListener('click', () => {
+    clonedSuccess.remove();
+    document.removeEventListener('keydown', onMessageEscKeydown);
+    document.removeEventListener('click', onMessageOverlayClick);
+  });
+
+  document.addEventListener('keydown', onMessageEscKeydown);
+  document.addEventListener('click', onMessageOverlayClick);
+};
+
+const showErrorMessage = () => {
+  const clonedError = errorTemplate.cloneNode(true);
+  document.body.append(clonedError);
+
+  const closeBtn = clonedError.querySelector('.error__button');
+  closeBtn.addEventListener('click', () => {
+    clonedError.remove();
+    document.removeEventListener('keydown', onMessageEscKeydown);
+    document.removeEventListener('click', onMessageOverlayClick);
+  });
+
+  document.addEventListener('keydown', onMessageEscKeydown);
+  document.addEventListener('click', onMessageOverlayClick);
+};
+
+imgForm.addEventListener('submit', (evt) => {
+  if(pristine.validate()){
+    evt.preventDefault();
+
+    uploadData(
+      () => {
+        imgInput.value = '';
+        imgForm.reset();
+        pristine.reset();
+        imgOverlay.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+        showSuccessMessage();
+      },
+      () => {
+        showErrorMessage();
+      },
+      'POST',
+      new FormData(imgForm)
+    );
+  }
+});
 
 comments.addEventListener('keydown', (evt) => {
   if (isEscKey(evt)) {
