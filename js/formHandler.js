@@ -245,7 +245,7 @@ textHashtags.addEventListener('input',onContentInput);
 const controlSmaller=document.querySelector(' .scale__control--smaller');
 const controlBigger=document.querySelector('.scale__control--bigger');
 const controlValue=document.querySelector('.scale__control--value');
-const  imgPreview=document.querySelector('.img-upload__preview');
+const  imgPreview=document.querySelector('.img-upload__preview img');
 
 const MIN_SCALE = 25;
 const MAX_SCALE = 100;
@@ -338,3 +338,21 @@ effectsHeat.addEventListener('change', () =>
 );
 
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
+const effectsPreviews=document.querySelectorAll('.effects__preview');
+
+imgInput.addEventListener('change', () => {
+  const file = imgInput.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    imgPreview.src = URL.createObjectURL(file);
+    const imageUrl=imgPreview.src;
+
+    effectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url(${imageUrl})`;
+    });
+  }
+});
