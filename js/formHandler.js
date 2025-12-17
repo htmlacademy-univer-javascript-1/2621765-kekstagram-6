@@ -28,11 +28,15 @@ const pristine = new Pristine(imgForm, {
   errorTextClass: 'img-upload__error',
   errorTextTag: 'div',
 });
+const  imgPreview=document.querySelector('.img-upload__preview img');
+let currentScale = 100;
 
 imgCancel.addEventListener('click',()=>{
   imgInput.value = '';
   imgForm.reset();
   pristine.reset();
+  imgPreview.style.transform = '';
+  currentScale = 100;
   imgOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
 });
@@ -50,6 +54,8 @@ document.addEventListener('keydown', (evt) => {
   imgInput.value = '';
   imgForm.reset();
   pristine.reset();
+  imgPreview.style.transform = '';
+  currentScale = 100;
   imgOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
 });
@@ -212,6 +218,8 @@ imgForm.addEventListener('submit', (evt) => {
         imgInput.value = '';
         imgForm.reset();
         pristine.reset();
+        imgPreview.style.transform = '';
+        currentScale = 100;
         imgOverlay.classList.add('hidden');
         document.body.classList.remove('modal-open');
         showSuccessMessage();
@@ -245,13 +253,13 @@ textHashtags.addEventListener('input',onContentInput);
 const controlSmaller=document.querySelector(' .scale__control--smaller');
 const controlBigger=document.querySelector('.scale__control--bigger');
 const controlValue=document.querySelector('.scale__control--value');
-const  imgPreview=document.querySelector('.img-upload__preview');
+
 
 const MIN_SCALE = 25;
 const MAX_SCALE = 100;
 const STEP=25;
 
-let currentScale = 100;
+
 controlSmaller.addEventListener('click', () => {
   if (currentScale > MIN_SCALE) {
     currentScale -= STEP;
@@ -338,3 +346,22 @@ effectsHeat.addEventListener('change', () =>
 );
 
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
+
+const effectsPreviews=document.querySelectorAll('.effects__preview');
+
+imgInput.addEventListener('change', () => {
+  const file = imgInput.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  imgPreview.style.transform = '';
+  currentScale = 100;
+  if (matches) {
+    imgPreview.src = URL.createObjectURL(file);
+    const imageUrl=imgPreview.src;
+
+    effectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url(${imageUrl})`;
+    });
+  }
+});
