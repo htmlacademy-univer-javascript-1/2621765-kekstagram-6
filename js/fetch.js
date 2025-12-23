@@ -1,10 +1,10 @@
-const Urls={
+const Urls = {
   GET:'https://29.javascript.htmlacademy.pro/kekstagram/data',
   POST:'https://29.javascript.htmlacademy.pro/kekstagram',
 };
 
 
-const sendRequest=(onSuccess,onError,method,body)=>{
+const sendRequest = (onSuccess,onError,method,body)=>{
   fetch(
     Urls[method],
     {
@@ -12,19 +12,15 @@ const sendRequest=(onSuccess,onError,method,body)=>{
       body:body,
     }
   )
-    .then((response)=>response.json())
-    .then((data)=>{
-      onSuccess(data);
-    })
-    .catch((err)=>{
-      onError(err);
-    });
+    .then((response) => response.json())
+    .then((data) => onSuccess(data))
+    .catch((err) => onError(err));
 };
 
-const loadData=(onSuccess,onError,method='GET')=>sendRequest(onSuccess,onError,method);
+const loadData = (onSuccess,onError,method='GET') => sendRequest(onSuccess,onError,method);
 
-const uploadData=(onSuccess,onError,method='POST',body)=>sendRequest(onSuccess,onError,method, body);
+const uploadData = (onSuccess,onError,method='POST',body) => sendRequest(onSuccess,onError,method, body);
 
-export{loadData,uploadData};
+export{ loadData,uploadData };
 
 
