@@ -242,7 +242,7 @@ const handleEffectChange = (effectFunction, ...args) => {
   setTimeout(() => effectFunction(...args), EFFECT_CHANGE_DELAY);
 };
 
-const onNoneEffectChange = () => handleEffectChange(resetEffectSlider); // ← НОВЫЙ обработчик
+const onNoneEffectChange = () => handleEffectChange(resetEffectSlider);
 
 const onChromeEffectChange = () => {
   handleEffectChange(
