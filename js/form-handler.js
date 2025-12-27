@@ -10,32 +10,33 @@ const SCALE_STEP = 25;
 const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const INITIAL_SCALE = 100;
 const DEFAULT_EFFECT_LEVEL = 100;
+const EFFECT_CHANGE_DELAY = 10;
 
-const imageInputElement = document.querySelector('.img-upload__input');
-const imageOverlayElement = document.querySelector('.img-upload__overlay');
-const cancelButtonElement = document.querySelector('.img-upload__cancel');
 const uploadFormElement = document.querySelector('.img-upload__form');
-const hashtagsInputElement = document.querySelector('.text__hashtags');
-const submitButtonElement = document.querySelector('.img-upload__submit');
-const commentTextareaElement = document.querySelector('.text__description');
+const imageInputElement = uploadFormElement.querySelector('.img-upload__input');
+const imageOverlayElement = uploadFormElement.querySelector('.img-upload__overlay');
+const cancelButtonElement = uploadFormElement.querySelector('.img-upload__cancel');
+const hashtagsInputElement = uploadFormElement.querySelector('.text__hashtags');
+const submitButtonElement = uploadFormElement.querySelector('.img-upload__submit');
+const commentTextareaElement = uploadFormElement.querySelector('.text__description');
 
-const sliderContainerElement = document.querySelector('.img-upload__effect-level');
-const effectSliderElement = document.querySelector('.effect-level__slider');
-const effectValueInputElement = document.querySelector('.effect-level__value');
+const sliderContainerElement = uploadFormElement.querySelector('.img-upload__effect-level');
+const effectSliderElement = uploadFormElement.querySelector('.effect-level__slider');
+const effectValueInputElement = uploadFormElement.querySelector('.effect-level__value');
 
-const noneEffectRadioElement = document.querySelector('#effect-none');
-const chromeEffectRadioElement = document.querySelector('#effect-chrome');
-const sepiaEffectRadioElement = document.querySelector('#effect-sepia');
-const marvinEffectRadioElement = document.querySelector('#effect-marvin');
-const phobosEffectRadioElement = document.querySelector('#effect-phobos');
-const heatEffectRadioElement = document.querySelector('#effect-heat');
+const noneEffectRadioElement = uploadFormElement.querySelector('#effect-none');
+const chromeEffectRadioElement = uploadFormElement.querySelector('#effect-chrome');
+const sepiaEffectRadioElement = uploadFormElement.querySelector('#effect-sepia');
+const marvinEffectRadioElement = uploadFormElement.querySelector('#effect-marvin');
+const phobosEffectRadioElement = uploadFormElement.querySelector('#effect-phobos');
+const heatEffectRadioElement = uploadFormElement.querySelector('#effect-heat');
 
-const scaleSmallerButtonElement = document.querySelector('.scale__control--smaller');
-const scaleBiggerButtonElement = document.querySelector('.scale__control--bigger');
-const scaleValueElement = document.querySelector('.scale__control--value');
+const scaleSmallerButtonElement = uploadFormElement.querySelector('.scale__control--smaller');
+const scaleBiggerButtonElement = uploadFormElement.querySelector('.scale__control--bigger');
+const scaleValueElement = uploadFormElement.querySelector('.scale__control--value');
 
-const imagePreviewElement = document.querySelector('.img-upload__preview img');
-const effectsPreviewElements = document.querySelectorAll('.effects__preview');
+const imagePreviewElement = uploadFormElement.querySelector('.img-upload__preview img');
+const effectsPreviewElements = uploadFormElement.querySelectorAll('.effects__preview');
 
 const successTemplateElement = document.querySelector('#success').content.querySelector('.success');
 const errorTemplateElement = document.querySelector('#error').content.querySelector('.error');
@@ -159,12 +160,13 @@ const showMessage = (template, buttonClass) => {
   document.body.append(messageElement);
 
   const closeButton = messageElement.querySelector(buttonClass);
-  closeButton.addEventListener('click', () => {
+  const onCloseButtonClick = () => {
     messageElement.remove();
     document.removeEventListener('keydown', onMessageEscKeyDown);
     document.removeEventListener('click', onMessageOverlayClick);
-  });
+  };
 
+  closeButton.addEventListener('click', onCloseButtonClick);
   document.addEventListener('keydown', onMessageEscKeyDown);
   document.addEventListener('click', onMessageOverlayClick);
 };
@@ -225,95 +227,108 @@ const createEffectSlider = (min, max, start, step, filterFunction) => {
 
   effectValueInputElement.value = start.toString();
   effectSliderElement.noUiSlider.off('update');
-  effectSliderElement.noUiSlider.on('update', (values) => {
+
+  const onSliderUpdate = (values) => {
     const value = values[0];
     effectValueInputElement.value = value;
     imagePreviewElement.style.filter = filterFunction(value);
-  });
+  };
+
+  effectSliderElement.noUiSlider.on('update', onSliderUpdate);
 };
 
 const handleEffectChange = (effectFunction, ...args) => {
   resetEffectSlider();
-  setTimeout(() => effectFunction(...args), 10);
+  setTimeout(() => effectFunction(...args), EFFECT_CHANGE_DELAY);
+};
+
+const onNoneEffectChange = () => handleEffectChange(resetEffectSlider); // ← НОВЫЙ обработчик
+
+const onChromeEffectChange = () => {
+  handleEffectChange(
+    createEffectSlider,
+    0,
+    1,
+    1,
+    0.1,
+    (value) => `grayscale(${value})`
+  );
+};
+
+const onSepiaEffectChange = () => {
+  handleEffectChange(
+    createEffectSlider,
+    0,
+    1,
+    1,
+    0.1,
+    (value) => `sepia(${value})`
+  );
+};
+
+const onMarvinEffectChange = () => {
+  handleEffectChange(
+    createEffectSlider,
+    0,
+    100,
+    100,
+    1,
+    (value) => `invert(${value}%)`
+  );
+};
+
+const onPhobosEffectChange = () => {
+  handleEffectChange(
+    createEffectSlider,
+    0,
+    3,
+    3,
+    0.1,
+    (value) => `blur(${value}px)`
+  );
+};
+
+const onHeatEffectChange = () => {
+  handleEffectChange(
+    createEffectSlider,
+    1,
+    3,
+    3,
+    0.1,
+    (value) => `brightness(${value})`
+  );
 };
 
 const setupEffectListeners = () => {
-  noneEffectRadioElement.addEventListener('change', () => handleEffectChange(resetEffectSlider));
+  noneEffectRadioElement.addEventListener('change', onNoneEffectChange);
+  chromeEffectRadioElement.addEventListener('change', onChromeEffectChange);
+  sepiaEffectRadioElement.addEventListener('change', onSepiaEffectChange);
+  marvinEffectRadioElement.addEventListener('change', onMarvinEffectChange);
+  phobosEffectRadioElement.addEventListener('change', onPhobosEffectChange);
+  heatEffectRadioElement.addEventListener('change', onHeatEffectChange);
+};
 
-  chromeEffectRadioElement.addEventListener('change', () => {
-    handleEffectChange(
-      createEffectSlider,
-      0,
-      1,
-      1,
-      0.1,
-      (value) => `grayscale(${value})`
-    );
-  });
+const onScaleSmallerButtonClick = () => {
+  if (currentScale > MIN_SCALE) {
+    currentScale -= SCALE_STEP;
+    scaleValueElement.value = `${currentScale}%`;
+    const scaleNumber = currentScale / 100;
+    imagePreviewElement.style.transform = `scale(${scaleNumber})`;
+  }
+};
 
-  sepiaEffectRadioElement.addEventListener('change', () => {
-    handleEffectChange(
-      createEffectSlider,
-      0,
-      1,
-      1,
-      0.1,
-      (value) => `sepia(${value})`
-    );
-  });
-
-  marvinEffectRadioElement.addEventListener('change', () => {
-    handleEffectChange(
-      createEffectSlider,
-      0,
-      100,
-      100,
-      1,
-      (value) => `invert(${value}%)`
-    );
-  });
-
-  phobosEffectRadioElement.addEventListener('change', () => {
-    handleEffectChange(
-      createEffectSlider,
-      0,
-      3,
-      3,
-      0.1,
-      (value) => `blur(${value}px)`
-    );
-  });
-
-  heatEffectRadioElement.addEventListener('change', () => {
-    handleEffectChange(
-      createEffectSlider,
-      1,
-      3,
-      3,
-      0.1,
-      (value) => `brightness(${value})`
-    );
-  });
+const onScaleBiggerButtonClick = () => {
+  if (currentScale < MAX_SCALE) {
+    currentScale += SCALE_STEP;
+    scaleValueElement.value = `${currentScale}%`;
+    const scaleNumber = currentScale / 100;
+    imagePreviewElement.style.transform = `scale(${scaleNumber})`;
+  }
 };
 
 const setupScaleControls = () => {
-  scaleSmallerButtonElement.addEventListener('click', () => {
-    if (currentScale > MIN_SCALE) {
-      currentScale -= SCALE_STEP;
-      scaleValueElement.value = `${currentScale}%`;
-      const scaleNumber = currentScale / 100;
-      imagePreviewElement.style.transform = `scale(${scaleNumber})`;
-    }
-  });
-
-  scaleBiggerButtonElement.addEventListener('click', () => {
-    if (currentScale < MAX_SCALE) {
-      currentScale += SCALE_STEP;
-      scaleValueElement.value = `${currentScale}%`;
-      const scaleNumber = currentScale / 100;
-      imagePreviewElement.style.transform = `scale(${scaleNumber})`;
-    }
-  });
+  scaleSmallerButtonElement.addEventListener('click', onScaleSmallerButtonClick);
+  scaleBiggerButtonElement.addEventListener('click', onScaleBiggerButtonClick);
 };
 
 const onImageInputChange = () => {
@@ -342,41 +357,55 @@ const onImageInputChange = () => {
   }
 };
 
-const setupFormSubmit = () => {
-  uploadFormElement.addEventListener('submit', (evt) => {
-    if (pristineValidator.validate()) {
-      evt.preventDefault();
 
-      uploadData(
-        () => {
-          closeForm();
-          showSuccessMessage();
-        },
-        () => {
-          showErrorMessage();
-        },
-        'POST',
-        new FormData(uploadFormElement)
-      );
-    }
-  });
+const onFormSubmit = (evt) => {
+  if (pristineValidator.validate()) {
+    evt.preventDefault();
+
+    uploadData(
+      () => {
+        closeForm();
+        showSuccessMessage();
+      },
+      () => {
+        showErrorMessage();
+      },
+      'POST',
+      new FormData(uploadFormElement)
+    );
+  }
+};
+
+
+const setupFormSubmit = () => {
+  uploadFormElement.addEventListener('submit', onFormSubmit);
+};
+
+const onCommentKeyDown = (evt) => {
+  if (isEscKey(evt)) {
+    evt.stopPropagation();
+  }
+};
+
+const onHashtagsKeyDown = (evt) => {
+  if (isEscKey(evt)) {
+    evt.stopPropagation();
+  }
+};
+
+const onCommentInput = () => {
+  updateSubmitButtonState();
+};
+
+const onHashtagsInput = () => {
+  updateSubmitButtonState();
 };
 
 const setupInputEventListeners = () => {
-  commentTextareaElement.addEventListener('keydown', (evt) => {
-    if (isEscKey(evt)) {
-      evt.stopPropagation();
-    }
-  });
-
-  hashtagsInputElement.addEventListener('keydown', (evt) => {
-    if (isEscKey(evt)) {
-      evt.stopPropagation();
-    }
-  });
-
-  commentTextareaElement.addEventListener('input', updateSubmitButtonState);
-  hashtagsInputElement.addEventListener('input', updateSubmitButtonState);
+  commentTextareaElement.addEventListener('keydown', onCommentKeyDown);
+  hashtagsInputElement.addEventListener('keydown', onHashtagsKeyDown);
+  commentTextareaElement.addEventListener('input', onCommentInput);
+  hashtagsInputElement.addEventListener('input', onHashtagsInput);
 };
 
 const init = () => {
@@ -389,6 +418,5 @@ const init = () => {
   cancelButtonElement.addEventListener('click', closeForm);
   imageInputElement.addEventListener('change', onImageInputChange);
 };
-
 
 init();

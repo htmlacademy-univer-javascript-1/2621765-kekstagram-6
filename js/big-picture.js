@@ -1,5 +1,7 @@
 import { isEscKey, getCommentWordForm } from './util.js';
 
+const COMMENTS_STEP = 5;
+
 const bigPictureElement = document.querySelector('.big-picture');
 const bigImageElement = bigPictureElement.querySelector('.big-picture__img img');
 const socialCommentsContainerElement = bigPictureElement.querySelector('.social__comments');
@@ -11,7 +13,6 @@ const closeButtonElement = bigPictureElement.querySelector('.big-picture__cancel
 const socialCommentTemplateElement = bigPictureElement.querySelector('.social__comment');
 
 
-const COMMENTS_STEP = 5;
 let visibleCommentsCount = COMMENTS_STEP;
 let currentComments = [];
 
